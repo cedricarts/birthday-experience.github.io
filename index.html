@@ -2,11 +2,28 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>ArtWear — Birthday Experience</title>
   <meta name="description" content="Send someone a personalised birthday experience, powered by ArtWear." />
+
+  <!-- PWA core -->
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="ArtWear Gift" />
+  <meta name="application-name" content="ArtWear Gift" />
+  <meta name="theme-color" content="#080809" />
+  <meta name="msapplication-TileColor" content="#080809" />
+
+  <!-- Apple touch icons (inline SVG-based) -->
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%23080809'/%3E%3Ctext x='90' y='115' font-family='Georgia,serif' font-size='72' font-weight='700' fill='%23d4b896' text-anchor='middle'%3EAW%3C/text%3E%3C/svg%3E" />
+
+  <!-- OG / Social -->
   <meta property="og:title" content="ArtWear — Birthday Experience" />
   <meta property="og:description" content="A gift crafted just for you." />
+  <meta property="og:type" content="website" />
+
+  <!-- Manifest injected via JS below -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
@@ -53,6 +70,14 @@
       z-index: 9000;
     }
 
+    /* ── Safe area for PWA/notch ── */
+    :root {
+      --sat: env(safe-area-inset-top, 0px);
+      --sab: env(safe-area-inset-bottom, 0px);
+      --sal: env(safe-area-inset-left, 0px);
+      --sar: env(safe-area-inset-right, 0px);
+    }
+
     /* ── Nav ── */
     .nav {
       position: fixed;
@@ -62,7 +87,10 @@
       align-items: center;
       justify-content: space-between;
       padding: 0 32px;
-      height: 60px;
+      padding-top: var(--sat);
+      padding-left: calc(32px + var(--sal));
+      padding-right: calc(32px + var(--sar));
+      height: calc(60px + var(--sat));
       border-bottom: 1px solid var(--border);
       background: rgba(8,8,9,0.7);
       backdrop-filter: blur(20px);
@@ -96,7 +124,7 @@
     /* ── Page shell ── */
     .page {
       min-height: 100vh;
-      padding-top: 60px;
+      padding-top: calc(60px + var(--sat));
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -113,7 +141,10 @@
       position: fixed;
       bottom: 0; left: 0; right: 0;
       z-index: 200;
-      height: 48px;
+      height: calc(48px + var(--sab));
+      padding-bottom: var(--sab);
+      padding-left: var(--sal);
+      padding-right: var(--sar);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -332,6 +363,84 @@
       .page { padding-left: 16px; padding-right: 16px; }
     }
   </style>
+
+  <script>
+    // ── Inline PWA manifest ──────────────────────────────────────────────────
+    (function() {
+      const manifest = {
+        name: "ArtWear Birthday Experience",
+        short_name: "ArtWear Gift",
+        description: "Send someone a personalised birthday experience, powered by ArtWear.",
+        start_url: "./",
+        display: "standalone",
+        orientation: "portrait",
+        background_color: "#080809",
+        theme_color: "#080809",
+        categories: ["lifestyle", "social"],
+        icons: [
+          {
+            src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%23080809'/%3E%3Ctext x='256' y='320' font-family='Georgia,serif' font-size='200' font-weight='700' fill='%23d4b896' text-anchor='middle'%3EAW%3C/text%3E%3C/svg%3E",
+            sizes: "512x512",
+            type: "image/svg+xml",
+            purpose: "any maskable"
+          }
+        ]
+      };
+      const blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('link');
+      link.rel = 'manifest';
+      link.href = url;
+      document.head.appendChild(link);
+    })();
+
+    // ── Service Worker ───────────────────────────────────────────────────────
+    if ('serviceWorker' in navigator) {
+      const CACHE = 'artwear-bday-v1';
+      const SW_SRC = `
+        const CACHE = '${"artwear-bday-v1"}';
+        const PRECACHE = ['/'];
+
+        self.addEventListener('install', e => {
+          e.waitUntil(
+            caches.open(CACHE).then(c => c.addAll(PRECACHE)).then(() => self.skipWaiting())
+          );
+        });
+
+        self.addEventListener('activate', e => {
+          e.waitUntil(
+            caches.keys().then(keys =>
+              Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+            ).then(() => self.clients.claim())
+          );
+        });
+
+        self.addEventListener('fetch', e => {
+          // Network-first for navigation, cache-first for assets
+          if (e.request.mode === 'navigate') {
+            e.respondWith(
+              fetch(e.request).catch(() => caches.match('/'))
+            );
+          } else {
+            e.respondWith(
+              caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
+                if (res.ok && e.request.url.startsWith('https://fonts.')) {
+                  const clone = res.clone();
+                  caches.open(CACHE).then(c => c.put(e.request, clone));
+                }
+                return res;
+              }))
+            );
+          }
+        });
+      `;
+      const swBlob = new Blob([SW_SRC], { type: 'application/javascript' });
+      const swUrl = URL.createObjectURL(swBlob);
+      navigator.serviceWorker.register(swUrl, { scope: './' })
+        .then(reg => console.log('[ArtWear SW] registered', reg.scope))
+        .catch(err => console.warn('[ArtWear SW] registration failed', err));
+    }
+  </script>
 </head>
 <body>
 <div id="root"></div>
