@@ -3,32 +3,36 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Birthday Experience</title>
+  <title>ArtWear — Birthday Experience</title>
+  <meta name="description" content="Send someone a personalised birthday experience, powered by ArtWear." />
+  <meta property="og:title" content="ArtWear — Birthday Experience" />
+  <meta property="og:description" content="A gift crafted just for you." />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@200;300;400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@200;300;400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #09090b;
-      --surface: rgba(255,255,255,0.04);
-      --surface-hover: rgba(255,255,255,0.07);
-      --border: rgba(255,255,255,0.08);
-      --border-focus: rgba(255,255,255,0.25);
-      --text-primary: rgba(255,255,255,0.95);
-      --text-secondary: rgba(255,255,255,0.45);
-      --text-tertiary: rgba(255,255,255,0.25);
-      --accent: #e8d5b7;
-      --accent-dim: rgba(232,213,183,0.15);
-      --glow: rgba(232,213,183,0.08);
+      --bg: #080809;
+      --surface: rgba(255,255,255,0.038);
+      --border: rgba(255,255,255,0.07);
+      --border-focus: rgba(255,255,255,0.22);
+      --text-primary: rgba(255,255,255,0.93);
+      --text-secondary: rgba(255,255,255,0.42);
+      --text-tertiary: rgba(255,255,255,0.22);
+      --accent: #d4b896;
+      --accent-soft: rgba(212,184,150,0.12);
+      --accent-border: rgba(212,184,150,0.22);
+      --red: rgba(255,100,100,0.7);
     }
 
     html, body, #root {
-      height: 100%;
+      min-height: 100%;
       width: 100%;
       background: var(--bg);
       color: var(--text-primary);
@@ -38,18 +42,118 @@
 
     body { overflow-x: hidden; }
 
-    /* Grain overlay */
-    body::before {
+    /* grain */
+    body::after {
       content: '';
       position: fixed;
       inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
-      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: 0.022;
       pointer-events: none;
-      z-index: 9999;
+      z-index: 9000;
     }
 
-    /* ── Input styles ── */
+    /* ── Nav ── */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      height: 60px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(8,8,9,0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    .nav-wordmark {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+    .nav-wordmark span {
+      color: var(--accent);
+    }
+    .nav-link {
+      font-size: 0.72rem;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      color: var(--text-tertiary);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-link:hover { color: var(--text-secondary); }
+
+    /* ── Page shell ── */
+    .page {
+      min-height: 100vh;
+      padding-top: 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+      padding-left: 24px;
+      padding-right: 24px;
+      padding-bottom: 80px;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      z-index: 200;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-top: 1px solid var(--border);
+      background: rgba(8,8,9,0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    .footer-text {
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+    }
+    .footer-text a {
+      color: var(--accent);
+      text-decoration: none;
+      opacity: 0.7;
+      transition: opacity 0.2s ease;
+    }
+    .footer-text a:hover { opacity: 1; }
+
+    /* ── Inputs ── */
+    .field-wrap { margin-bottom: 30px; }
+    .field-label {
+      display: block;
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      font-weight: 400;
+    }
+    .field-label .opt {
+      font-size: 0.58rem;
+      letter-spacing: 0.05em;
+      text-transform: none;
+      opacity: 0.5;
+      margin-left: 6px;
+    }
     .field-input {
       width: 100%;
       background: transparent;
@@ -57,746 +161,750 @@
       border-bottom: 1px solid var(--border);
       color: var(--text-primary);
       font-family: 'Sora', sans-serif;
-      font-size: 0.9rem;
+      font-size: 0.875rem;
       font-weight: 300;
-      padding: 12px 0;
+      padding: 11px 0;
       outline: none;
-      transition: border-color 0.3s ease;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
       caret-color: var(--accent);
     }
     .field-input::placeholder { color: var(--text-tertiary); }
-    .field-input:focus { border-bottom-color: var(--border-focus); box-shadow: 0 1px 0 0 rgba(255,255,255,0.1); }
-    .field-input::-webkit-calendar-picker-indicator { filter: invert(0.6); cursor: pointer; }
+    .field-input:focus {
+      border-bottom-color: var(--border-focus);
+      box-shadow: 0 1px 0 0 rgba(255,255,255,0.08);
+    }
+    .field-input.error { border-bottom-color: var(--red); }
+    .field-input::-webkit-calendar-picker-indicator { filter: invert(0.5); cursor: pointer; opacity: 0.6; }
+    textarea.field-input { resize: none; line-height: 1.65; }
 
-    textarea.field-input { resize: none; padding: 12px 0; line-height: 1.6; }
-
-    /* ── Button ── */
-    .btn-glass {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+    /* ── Buttons ── */
+    .btn {
+      background: rgba(255,255,255,0.055);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       color: var(--text-primary);
       font-family: 'Sora', sans-serif;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 500;
-      letter-spacing: 0.04em;
-      padding: 14px 32px;
-      border-radius: 12px;
+      letter-spacing: 0.05em;
+      padding: 13px 28px;
+      border-radius: 10px;
       cursor: pointer;
-      transition: background 0.25s ease, border-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.18s ease, box-shadow 0.2s ease, color 0.2s ease;
       white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
-    .btn-glass:hover {
-      background: rgba(255,255,255,0.1);
-      border-color: rgba(255,255,255,0.2);
-      transform: scale(1.02);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    .btn:hover {
+      background: rgba(255,255,255,0.09);
+      border-color: rgba(255,255,255,0.16);
+      transform: scale(1.018);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.35);
     }
-    .btn-glass:active { transform: scale(0.99); }
-    .btn-glass.accent {
-      background: rgba(232,213,183,0.1);
-      border-color: rgba(232,213,183,0.25);
+    .btn:active { transform: scale(0.985); }
+    .btn.primary {
+      background: var(--accent-soft);
+      border-color: var(--accent-border);
       color: var(--accent);
     }
-    .btn-glass.accent:hover {
-      background: rgba(232,213,183,0.15);
-      border-color: rgba(232,213,183,0.4);
-      box-shadow: 0 8px 32px rgba(232,213,183,0.08);
+    .btn.primary:hover {
+      background: rgba(212,184,150,0.18);
+      border-color: rgba(212,184,150,0.35);
+      box-shadow: 0 6px 24px rgba(212,184,150,0.07);
     }
+    .btn.icon-only {
+      padding: 10px 16px;
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+    }
+    .btn.full { width: 100%; }
 
     /* ── Card ── */
-    .glass-card {
+    .card {
       background: var(--surface);
       border: 1px solid var(--border);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-radius: 20px;
-      padding: 40px;
+      border-radius: 18px;
+      padding: 36px;
+    }
+
+    /* ── Output box ── */
+    .output-box {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.73rem;
+      color: var(--text-secondary);
+      word-break: break-all;
+      line-height: 1.65;
+    }
+
+    /* ── Ambient blobs ── */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(130px);
+      pointer-events: none;
+      z-index: 0;
+      transition: opacity 1.2s ease;
     }
 
     /* ── Countdown digits ── */
-    .digit-block {
-      font-family: 'DM Mono', monospace;
-      font-variant-numeric: tabular-nums;
-      font-size: clamp(2.5rem, 8vw, 5rem);
-      font-weight: 300;
-      color: var(--text-primary);
-      line-height: 1;
-      letter-spacing: -0.02em;
-    }
+    .digit { font-family: 'DM Mono', monospace; font-variant-numeric: tabular-nums; line-height: 1; }
     .digit-label {
-      font-size: 0.65rem;
+      font-size: 0.6rem;
       font-weight: 400;
-      letter-spacing: 0.18em;
+      letter-spacing: 0.2em;
       color: var(--text-tertiary);
       text-transform: uppercase;
       margin-top: 10px;
     }
 
-    /* ── Ambient bg blobs ── */
-    .ambient {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(120px);
-      pointer-events: none;
-      z-index: 0;
-    }
+    /* ── Divider ── */
+    .rule { width: 28px; height: 1px; background: var(--border); margin: 0 auto; }
 
-    /* ── Output box ── */
-    .output-box {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px 20px;
-      font-family: 'DM Mono', monospace;
-      font-size: 0.78rem;
-      color: var(--text-secondary);
-      word-break: break-all;
-      line-height: 1.6;
+    /* ── Confetti canvas ── */
+    #aw-confetti {
+      position: fixed; inset: 0;
+      pointer-events: none;
+      z-index: 5000;
     }
 
     /* ── Gift reveal ── */
+    .gift-reveal {
+      overflow: hidden;
+      transition: max-height 0.6s cubic-bezier(0.16,1,0.3,1), opacity 0.5s ease;
+    }
     .gift-code {
       font-family: 'DM Mono', monospace;
-      font-size: clamp(1.2rem, 4vw, 2rem);
-      letter-spacing: 0.15em;
+      font-size: clamp(1.3rem, 5vw, 2.2rem);
+      letter-spacing: 0.18em;
       color: var(--accent);
+      font-weight: 400;
+    }
+
+    /* ── Share row ── */
+    .share-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .share-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-family: 'Sora', sans-serif;
+      font-size: 0.72rem;
       font-weight: 500;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+    }
+    .share-btn:hover {
+      background: rgba(255,255,255,0.08);
+      color: var(--text-primary);
+      border-color: rgba(255,255,255,0.14);
+      transform: translateY(-1px);
     }
 
-    /* ── Separator ── */
-    .sep {
-      width: 32px;
-      height: 1px;
-      background: var(--border);
-      margin: 0 auto;
-    }
-
-    /* ── Confetti canvas ── */
-    #confetti-canvas {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 100;
-    }
+    /* ── Fade animations ── */
+    .fade-up { opacity: 0; transform: translateY(18px); }
+    .fade-up.in { opacity: 1; transform: translateY(0); transition: opacity 0.65s ease, transform 0.65s ease; }
 
     /* ── Scrollbar ── */
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
-
-    /* ── Transitions ── */
-    .fade-enter { opacity: 0; transform: translateY(16px); }
-    .fade-visible { opacity: 1; transform: translateY(0); transition: opacity 0.7s ease, transform 0.7s ease; }
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
 
     @media (max-width: 640px) {
-      .glass-card { padding: 28px 20px; border-radius: 16px; }
+      .nav { padding: 0 20px; }
+      .card { padding: 24px 18px; border-radius: 14px; }
+      .page { padding-left: 16px; padding-right: 16px; }
     }
   </style>
 </head>
 <body>
-  <div id="root"></div>
+<div id="root"></div>
 
-  <script type="text/babel">
-    const { useState, useEffect, useRef, useCallback } = React;
+<script type="text/babel">
+  const { useState, useEffect, useRef, useCallback } = React;
 
-    // ─── Simple hash router ────────────────────────────────────────────────────
-    function useRouter() {
-      const [location, setLocation] = useState(() => {
-        const h = window.location.hash || '#/';
-        return { path: h.replace('#', '').split('?')[0] || '/', search: h.includes('?') ? '?' + h.split('?')[1] : '' };
-      });
+  const SHOP_URL = 'https://ca-artwear.netlify.app';
 
-      useEffect(() => {
-        const handler = () => {
-          const h = window.location.hash || '#/';
-          setLocation({ path: h.replace('#', '').split('?')[0] || '/', search: h.includes('?') ? '?' + h.split('?')[1] : '' });
-        };
-        window.addEventListener('hashchange', handler);
-        return () => window.removeEventListener('hashchange', handler);
-      }, []);
+  // ─── Router ────────────────────────────────────────────────────────────────
+  function useRouter() {
+    const parse = () => {
+      const h = window.location.hash || '#/';
+      const withoutHash = h.slice(1);
+      const [path, qs] = withoutHash.split('?');
+      return { path: path || '/', search: qs ? '?' + qs : '' };
+    };
+    const [loc, setLoc] = useState(parse);
+    useEffect(() => {
+      const fn = () => setLoc(parse());
+      window.addEventListener('hashchange', fn);
+      return () => window.removeEventListener('hashchange', fn);
+    }, []);
+    const navigate = useCallback(to => { window.location.hash = to; }, []);
+    return { loc, navigate };
+  }
 
-      const navigate = useCallback((to) => { window.location.hash = to; }, []);
-      return { location, navigate };
-    }
+  // ─── Encode / decode ──────────────────────────────────────────────────────
+  const enc = str => btoa(unescape(encodeURIComponent(str)));
+  const dec = str => { try { return decodeURIComponent(escape(atob(str))); } catch { return str; } };
 
-    function useSearchParams(search) {
-      return new URLSearchParams(search);
-    }
+  // ─── Animated reveal ──────────────────────────────────────────────────────
+  function Up({ children, delay = 0, style = {} }) {
+    const [on, setOn] = useState(false);
+    useEffect(() => { const t = setTimeout(() => setOn(true), delay); return () => clearTimeout(t); }, [delay]);
+    return (
+      <div className={`fade-up${on ? ' in' : ''}`} style={{ transitionDelay: `${delay}ms`, ...style }}>
+        {children}
+      </div>
+    );
+  }
 
-    // ─── Confetti ─────────────────────────────────────────────────────────────
-    function Confetti() {
-      const canvasRef = useRef(null);
-      const animRef = useRef(null);
-      const particlesRef = useRef([]);
+  // ─── Ambient background ───────────────────────────────────────────────────
+  function Blobs({ warm }) {
+    return (
+      <>
+        <div className="blob" style={{
+          width: 560, height: 560,
+          background: warm ? 'rgba(212,184,150,0.055)' : 'rgba(255,255,255,0.025)',
+          top: -180, right: -120,
+        }} />
+        <div className="blob" style={{
+          width: 360, height: 360,
+          background: warm ? 'rgba(180,140,100,0.04)' : 'rgba(255,255,255,0.015)',
+          bottom: -80, left: -80,
+        }} />
+      </>
+    );
+  }
 
-      const COLORS = ['#e8d5b7', '#d4b896', '#f5ead8', '#c8a882', '#ede0cc', '#b8966e'];
-      const COUNT = 80;
+  // ─── Nav ──────────────────────────────────────────────────────────────────
+  function Nav({ showShopLink = true }) {
+    return (
+      <nav className="nav">
+        <a className="nav-wordmark" href="#/">Art<span>Wear</span></a>
+        {showShopLink && (
+          <a className="nav-link" href={SHOP_URL} target="_blank" rel="noopener noreferrer">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+              <path d="M1 9L9 1M9 1H3M9 1V7" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            Shop
+          </a>
+        )}
+      </nav>
+    );
+  }
 
-      useEffect(() => {
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
+  // ─── Footer ───────────────────────────────────────────────────────────────
+  function Footer() {
+    return (
+      <footer className="footer">
+        <p className="footer-text">
+          A gift experience by&nbsp;<a href={SHOP_URL} target="_blank" rel="noopener noreferrer">ArtWear</a>
+        </p>
+      </footer>
+    );
+  }
 
-        const resize = () => {
-          canvas.width = window.innerWidth;
-          canvas.height = window.innerHeight;
-        };
-        resize();
-        window.addEventListener('resize', resize);
+  // ─── Confetti ─────────────────────────────────────────────────────────────
+  function Confetti() {
+    const cvs = useRef(null);
+    const raf = useRef(null);
+    const pts = useRef([]);
+    const COLS = ['#d4b896', '#c8a882', '#e8d5b7', '#b8966e', '#ede0cc', '#a07850'];
 
-        particlesRef.current = Array.from({ length: COUNT }, () => ({
-          x: Math.random() * canvas.width,
-          y: -20 - Math.random() * canvas.height,
-          w: 6 + Math.random() * 8,
-          h: 3 + Math.random() * 4,
-          r: Math.random() * Math.PI * 2,
-          dr: (Math.random() - 0.5) * 0.04,
-          vy: 0.4 + Math.random() * 0.8,
-          vx: (Math.random() - 0.5) * 0.5,
-          color: COLORS[Math.floor(Math.random() * COLORS.length)],
-          opacity: 0.6 + Math.random() * 0.4,
-        }));
+    useEffect(() => {
+      const c = cvs.current;
+      const ctx = c.getContext('2d');
+      const resize = () => { c.width = innerWidth; c.height = innerHeight; };
+      resize();
+      addEventListener('resize', resize);
 
-        const draw = () => {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          particlesRef.current.forEach(p => {
-            ctx.save();
-            ctx.translate(p.x, p.y);
-            ctx.rotate(p.r);
-            ctx.globalAlpha = p.opacity;
-            ctx.fillStyle = p.color;
-            ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-            ctx.restore();
-            p.y += p.vy;
-            p.x += p.vx;
-            p.r += p.dr;
-            if (p.y > canvas.height + 20) {
-              p.y = -20;
-              p.x = Math.random() * canvas.width;
-            }
-          });
-          animRef.current = requestAnimationFrame(draw);
-        };
-        draw();
+      pts.current = Array.from({ length: 70 }, () => ({
+        x: Math.random() * c.width,
+        y: -10 - Math.random() * c.height * 0.6,
+        w: 5 + Math.random() * 7,
+        h: 2.5 + Math.random() * 3.5,
+        r: Math.random() * Math.PI * 2,
+        dr: (Math.random() - 0.5) * 0.035,
+        vy: 0.35 + Math.random() * 0.7,
+        vx: (Math.random() - 0.5) * 0.4,
+        col: COLS[Math.floor(Math.random() * COLS.length)],
+        a: 0.5 + Math.random() * 0.5,
+      }));
 
-        return () => {
-          cancelAnimationFrame(animRef.current);
-          window.removeEventListener('resize', resize);
-        };
-      }, []);
+      const draw = () => {
+        ctx.clearRect(0, 0, c.width, c.height);
+        pts.current.forEach(p => {
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.r);
+          ctx.globalAlpha = p.a;
+          ctx.fillStyle = p.col;
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          ctx.restore();
+          p.y += p.vy; p.x += p.vx; p.r += p.dr;
+          if (p.y > c.height + 10) { p.y = -12; p.x = Math.random() * c.width; }
+        });
+        raf.current = requestAnimationFrame(draw);
+      };
+      draw();
+      return () => { cancelAnimationFrame(raf.current); removeEventListener('resize', resize); };
+    }, []);
 
-      return <canvas ref={canvasRef} id="confetti-canvas" />;
-    }
+    return <canvas ref={cvs} id="aw-confetti" />;
+  }
 
-    // ─── Animated element ─────────────────────────────────────────────────────
-    function Reveal({ children, delay = 0, style = {} }) {
-      const ref = useRef(null);
-      const [visible, setVisible] = useState(false);
+  // ─── Typing text ──────────────────────────────────────────────────────────
+  function Typed({ text, startDelay = 600 }) {
+    const [out, setOut] = useState('');
+    const [go, setGo] = useState(false);
+    useEffect(() => { const t = setTimeout(() => setGo(true), startDelay); return () => clearTimeout(t); }, []);
+    useEffect(() => {
+      if (!go || out.length >= text.length) return;
+      const t = setTimeout(() => setOut(text.slice(0, out.length + 1)), 28);
+      return () => clearTimeout(t);
+    }, [go, out, text]);
+    return (
+      <span>
+        {out}
+        {go && out.length < text.length && (
+          <span style={{
+            display: 'inline-block', width: '1.5px', height: '1em',
+            background: 'var(--accent)', marginLeft: '1px', verticalAlign: 'text-bottom',
+            animation: 'blink 0.9s step-end infinite',
+          }} />
+        )}
+        <style>{`@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}`}</style>
+      </span>
+    );
+  }
 
-      useEffect(() => {
-        const t = setTimeout(() => setVisible(true), delay);
-        return () => clearTimeout(t);
-      }, [delay]);
+  // ─── Social share buttons ─────────────────────────────────────────────────
+  function ShareButtons({ name }) {
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent(`🎂 Wishing ${name} a very happy birthday!`);
 
-      return (
-        <div
-          ref={ref}
-          className={visible ? 'fade-visible' : 'fade-enter'}
-          style={{ transitionDelay: `${delay}ms`, ...style }}
-        >
-          {children}
+    const shares = [
+      {
+        label: 'WhatsApp',
+        icon: (
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+            <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.854L.078 23.617a.5.5 0 00.612.612l5.763-1.454A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.946 0-3.773-.5-5.365-1.376l-.386-.217-3.993 1.007 1.007-3.878-.238-.4A9.961 9.961 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+          </svg>
+        ),
+        href: `https://wa.me/?text=${text}%20${url}`,
+      },
+      {
+        label: 'X / Twitter',
+        icon: (
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.742l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+          </svg>
+        ),
+        href: `https://twitter.com/intent/tweet?text=${text}&url=${url}`,
+      },
+      {
+        label: 'Copy Link',
+        icon: (
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2"/>
+            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+          </svg>
+        ),
+        action: 'copy',
+      },
+    ];
+
+    const [copiedShare, setCopiedShare] = useState(false);
+    const handleCopy = async () => {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopiedShare(true);
+      setTimeout(() => setCopiedShare(false), 2000);
+    };
+
+    return (
+      <div>
+        <p style={{
+          fontSize: '0.6rem', letterSpacing: '0.18em', color: 'var(--text-tertiary)',
+          textTransform: 'uppercase', marginBottom: '14px',
+        }}>Share the joy</p>
+        <div className="share-row">
+          {shares.map(s => s.action === 'copy' ? (
+            <button key="copy" className="share-btn" onClick={handleCopy}>
+              {s.icon}
+              {copiedShare ? 'Copied!' : s.label}
+            </button>
+          ) : (
+            <a key={s.label} className="share-btn" href={s.href} target="_blank" rel="noopener noreferrer">
+              {s.icon}
+              {s.label}
+            </a>
+          ))}
         </div>
-      );
-    }
+      </div>
+    );
+  }
 
-    // ─── Ambient background ───────────────────────────────────────────────────
-    function AmbientBg({ celebrate }) {
+  // ─── Gift Reveal ──────────────────────────────────────────────────────────
+  function GiftReveal({ coupon }) {
+    const [open, setOpen] = useState(false);
+    const [copied, setCopied] = useState(false);
+
+    const copy = async () => {
+      await navigator.clipboard.writeText(coupon);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    };
+
+    return (
+      <div style={{ marginTop: '40px' }}>
+        {!open ? (
+          <button className="btn primary" onClick={() => setOpen(true)} style={{ padding: '15px 36px', fontSize: '0.85rem' }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 12v10H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/>
+            </svg>
+            Open Your Gift
+          </button>
+        ) : (
+          <div style={{ opacity: 1, transform: 'translateY(0)', animation: 'slideUp 0.55s cubic-bezier(0.16,1,0.3,1) forwards' }}>
+            <style>{`@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}`}</style>
+            <div className="card" style={{
+              background: 'rgba(212,184,150,0.04)',
+              borderColor: 'rgba(212,184,150,0.12)',
+              maxWidth: '400px', margin: '0 auto', textAlign: 'center',
+            }}>
+              <p style={{
+                fontSize: '0.58rem', letterSpacing: '0.2em', color: 'var(--text-tertiary)',
+                textTransform: 'uppercase', marginBottom: '20px',
+              }}>Your ArtWear Gift Code</p>
+              <div className="gift-code" style={{ marginBottom: '8px' }}>{coupon}</div>
+              <p style={{
+                fontSize: '0.72rem', color: 'var(--text-tertiary)', marginBottom: '28px', fontWeight: 300,
+              }}>Use at checkout on <a href={SHOP_URL} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', textDecoration: 'none', opacity: 0.8 }}>ca-artwear.netlify.app</a></p>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button className="btn" onClick={copy} style={{
+                  flex: 1, fontSize: '0.78rem', padding: '11px 20px',
+                  color: copied ? 'var(--accent)' : undefined,
+                  borderColor: copied ? 'var(--accent-border)' : undefined,
+                }}>
+                  {copied ? '✓  Copied' : 'Copy Code'}
+                </button>
+                <a className="btn" href={SHOP_URL} target="_blank" rel="noopener noreferrer"
+                   style={{ flex: 1, fontSize: '0.78rem', padding: '11px 20px', textDecoration: 'none' }}>
+                  Shop Now →
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ─── Countdown ────────────────────────────────────────────────────────────
+  function Countdown({ targetDate, name }) {
+    const [t, setT] = useState({ d: 0, h: 0, m: 0, s: 0 });
+    useEffect(() => {
+      const tick = () => {
+        const diff = Math.max(0, new Date(targetDate + 'T00:00:00') - new Date());
+        setT({
+          d: Math.floor(diff / 86400000),
+          h: Math.floor((diff % 86400000) / 3600000),
+          m: Math.floor((diff % 3600000) / 60000),
+          s: Math.floor((diff % 60000) / 1000),
+        });
+      };
+      tick();
+      const id = setInterval(tick, 1000);
+      return () => clearInterval(id);
+    }, [targetDate]);
+
+    const pad = n => String(n).padStart(2, '0');
+    const units = [{ v: t.d, l: 'Days' }, { v: t.h, l: 'Hours' }, { v: t.m, l: 'Min' }, { v: t.s, l: 'Sec' }];
+
+    return (
+      <>
+        <Nav />
+        <div className="page">
+          <Blobs warm={false} />
+          <div style={{ textAlign: 'center', maxWidth: '560px', width: '100%' }}>
+            <Up delay={0}>
+              <p style={{ fontSize: '0.65rem', letterSpacing: '0.22em', color: 'var(--text-tertiary)', textTransform: 'uppercase', marginBottom: '32px' }}>
+                Something special is on its way
+              </p>
+            </Up>
+            <Up delay={100}>
+              <h1 style={{
+                fontSize: 'clamp(2rem, 8vw, 4.2rem)', fontWeight: 700,
+                letterSpacing: '-0.03em', lineHeight: 1.05, marginBottom: '56px',
+              }}>{name}</h1>
+            </Up>
+            <Up delay={220}>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 'clamp(16px, 5vw, 44px)', marginBottom: '56px' }}>
+                {units.map(({ v, l }) => (
+                  <div key={l} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div className="digit" style={{ fontSize: 'clamp(2.2rem, 7vw, 4.4rem)', fontWeight: 300, letterSpacing: '-0.02em' }}>{pad(v)}</div>
+                    <div className="digit-label">{l}</div>
+                  </div>
+                ))}
+              </div>
+            </Up>
+            <Up delay={340}>
+              <div className="rule" />
+              <p style={{ marginTop: '28px', fontSize: '0.8rem', color: 'var(--text-tertiary)', fontWeight: 300, letterSpacing: '0.04em' }}>
+                Mark your calendar.
+              </p>
+            </Up>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
+
+  // ─── Celebration ──────────────────────────────────────────────────────────
+  function Celebration({ name, message, coupon }) {
+    return (
+      <>
+        <Nav showShopLink={true} />
+        <Confetti />
+        <div className="page" style={{ paddingTop: 80 }}>
+          <Blobs warm={true} />
+          <div style={{ textAlign: 'center', maxWidth: '620px', width: '100%' }}>
+
+            <Up delay={0}>
+              <p style={{ fontSize: '0.65rem', letterSpacing: '0.22em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: '28px', opacity: 0.65 }}>
+                Today is your day
+              </p>
+            </Up>
+
+            <Up delay={140}>
+              <h1 style={{
+                fontSize: 'clamp(2.2rem, 9vw, 5rem)', fontWeight: 800,
+                letterSpacing: '-0.04em', lineHeight: 1.0, marginBottom: '28px',
+                background: 'linear-gradient(135deg, #fff 0%, #d4b896 55%, #b8966e 100%)',
+                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+              }}>
+                Happy Birthday,<br />{name}
+              </h1>
+            </Up>
+
+            {message && (
+              <Up delay={380}>
+                <p style={{
+                  fontSize: 'clamp(0.9rem, 2.4vw, 1.08rem)', fontWeight: 300,
+                  color: 'var(--text-secondary)', lineHeight: 1.8,
+                  maxWidth: '460px', margin: '0 auto 32px',
+                }}>
+                  <Typed text={message} startDelay={700} />
+                </p>
+              </Up>
+            )}
+
+            {coupon && (
+              <Up delay={600}>
+                <GiftReveal coupon={coupon} />
+              </Up>
+            )}
+
+            <Up delay={coupon ? 800 : 500}>
+              <div style={{ marginTop: coupon ? '48px' : '40px' }}>
+                <div className="rule" style={{ marginBottom: '28px' }} />
+                <ShareButtons name={name} />
+              </div>
+            </Up>
+
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
+
+  // ─── Experience ───────────────────────────────────────────────────────────
+  function Experience({ search }) {
+    const p = new URLSearchParams(search);
+    const name = p.get('n');
+    const dateStr = p.get('d');
+    const message = p.get('m') ? dec(p.get('m')) : '';
+    const coupon = p.get('c') ? dec(p.get('c')) : '';
+
+    if (!name || !dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
       return (
         <>
-          <div className="ambient" style={{
-            width: '600px', height: '600px',
-            background: celebrate ? 'rgba(232,213,183,0.06)' : 'rgba(255,255,255,0.03)',
-            top: '-200px', right: '-100px',
-            transition: 'background 1s ease',
-          }} />
-          <div className="ambient" style={{
-            width: '400px', height: '400px',
-            background: celebrate ? 'rgba(200,168,130,0.05)' : 'rgba(255,255,255,0.02)',
-            bottom: '-100px', left: '-100px',
-            transition: 'background 1s ease',
-          }} />
+          <Nav />
+          <div className="page" style={{ textAlign: 'center' }}>
+            <Blobs warm={false} />
+            <Up delay={0}>
+              <p style={{ fontSize: '0.6rem', letterSpacing: '0.2em', color: 'var(--text-tertiary)', textTransform: 'uppercase', marginBottom: '20px' }}>
+                404
+              </p>
+              <h2 style={{ fontSize: 'clamp(1.4rem, 5vw, 2.6rem)', fontWeight: 600, letterSpacing: '-0.03em', marginBottom: '14px' }}>
+                The stars aren't aligned.
+              </h2>
+              <p style={{ color: 'var(--text-tertiary)', fontSize: '0.85rem', fontWeight: 300, marginBottom: '40px' }}>
+                This link is invalid or incomplete.
+              </p>
+              <a href="#/" className="btn" style={{ textDecoration: 'none', fontSize: '0.8rem' }}>← Create a new experience</a>
+            </Up>
+          </div>
+          <Footer />
         </>
       );
     }
 
-    // ─── Countdown Component ──────────────────────────────────────────────────
-    function Countdown({ targetDate, name }) {
-      const [time, setTime] = useState({ d: 0, h: 0, m: 0, s: 0 });
+    const now = new Date();
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+    const isBday = todayStr >= dateStr;
 
-      useEffect(() => {
-        const update = () => {
-          const now = new Date();
-          const target = new Date(targetDate + 'T00:00:00');
-          const diff = Math.max(0, target - now);
-          const d = Math.floor(diff / 86400000);
-          const h = Math.floor((diff % 86400000) / 3600000);
-          const m = Math.floor((diff % 3600000) / 60000);
-          const s = Math.floor((diff % 60000) / 1000);
-          setTime({ d, h, m, s });
-        };
-        update();
-        const id = setInterval(update, 1000);
-        return () => clearInterval(id);
-      }, [targetDate]);
+    return isBday
+      ? <Celebration name={name} message={message} coupon={coupon} />
+      : <Countdown targetDate={dateStr} name={name} />;
+  }
 
-      const pad = n => String(n).padStart(2, '0');
+  // ─── Generator ────────────────────────────────────────────────────────────
+  function Generator() {
+    const [form, setForm] = useState({ name: '', date: '', message: '', coupon: '' });
+    const [link, setLink] = useState('');
+    const [copied, setCopied] = useState(false);
+    const [errors, setErrors] = useState({});
 
-      const units = [
-        { val: time.d, label: 'Days' },
-        { val: time.h, label: 'Hours' },
-        { val: time.m, label: 'Minutes' },
-        { val: time.s, label: 'Seconds' },
-      ];
+    const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
-      return (
-        <div style={{
-          minHeight: '100vh', display: 'flex', alignItems: 'center',
-          justifyContent: 'center', padding: '24px', position: 'relative', zIndex: 1,
-        }}>
-          <AmbientBg celebrate={false} />
-          <div style={{ textAlign: 'center', maxWidth: '640px', width: '100%' }}>
-            <Reveal delay={0}>
-              <p style={{
-                fontSize: '0.7rem', letterSpacing: '0.22em', color: 'var(--text-tertiary)',
-                textTransform: 'uppercase', marginBottom: '40px', fontWeight: 400,
-              }}>Something special is coming for</p>
-            </Reveal>
+    const validate = () => {
+      const e = {};
+      if (!form.name.trim()) e.name = true;
+      if (!form.date) e.date = true;
+      setErrors(e);
+      return !Object.keys(e).length;
+    };
 
-            <Reveal delay={120}>
-              <h1 style={{
-                fontSize: 'clamp(2.2rem, 8vw, 4.5rem)', fontWeight: 700,
-                letterSpacing: '-0.03em', color: 'var(--text-primary)',
-                marginBottom: '64px', lineHeight: 1.05,
-              }}>{name}</h1>
-            </Reveal>
+    const generate = () => {
+      if (!validate()) return;
+      const sp = new URLSearchParams();
+      sp.set('n', form.name.trim());
+      sp.set('d', form.date);
+      if (form.message.trim()) sp.set('m', enc(form.message.trim()));
+      if (form.coupon.trim()) sp.set('c', enc(form.coupon.trim()));
+      setLink(`${location.origin}${location.pathname}#/celebrate?${sp}`);
+      setCopied(false);
+    };
 
-            <Reveal delay={240}>
-              <div style={{
-                display: 'flex', justifyContent: 'center', gap: 'clamp(20px, 5vw, 48px)',
-                marginBottom: '64px',
-              }}>
-                {units.map(({ val, label }, i) => (
-                  <div key={label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <div className="digit-block">{pad(val)}</div>
-                    <div className="digit-label">{label}</div>
-                  </div>
-                ))}
-              </div>
-            </Reveal>
+    const copy = async () => {
+      await navigator.clipboard.writeText(link);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    };
 
-            <Reveal delay={360}>
-              <div className="sep" />
-              <p style={{
-                marginTop: '32px', fontSize: '0.82rem', color: 'var(--text-tertiary)',
-                fontWeight: 300, letterSpacing: '0.04em',
-              }}>
-                Mark your calendar.
-              </p>
-            </Reveal>
-          </div>
-        </div>
-      );
-    }
+    const preview = () => {
+      if (!link) return;
+      window.location.hash = link.split('#')[1];
+    };
 
-    // ─── Typing effect ────────────────────────────────────────────────────────
-    function TypedText({ text, delay = 800 }) {
-      const [displayed, setDisplayed] = useState('');
-      const [started, setStarted] = useState(false);
+    return (
+      <>
+        <Nav />
+        <div className="page">
+          <Blobs warm={false} />
+          <div style={{ width: '100%', maxWidth: '460px' }}>
 
-      useEffect(() => {
-        const t = setTimeout(() => setStarted(true), delay);
-        return () => clearTimeout(t);
-      }, [delay]);
-
-      useEffect(() => {
-        if (!started) return;
-        if (displayed.length >= text.length) return;
-        const t = setTimeout(() => setDisplayed(text.slice(0, displayed.length + 1)), 30);
-        return () => clearTimeout(t);
-      }, [started, displayed, text]);
-
-      return (
-        <span>
-          {displayed}
-          {displayed.length < text.length && started && (
-            <span style={{
-              display: 'inline-block', width: '2px', height: '1.1em',
-              background: 'var(--accent)', marginLeft: '2px', verticalAlign: 'text-bottom',
-              animation: 'blink 1s step-end infinite',
-            }} />
-          )}
-          <style>{`@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }`}</style>
-        </span>
-      );
-    }
-
-    // ─── Gift reveal ──────────────────────────────────────────────────────────
-    function GiftReveal({ coupon }) {
-      const [opened, setOpened] = useState(false);
-      const [copied, setCopied] = useState(false);
-
-      const copy = async () => {
-        await navigator.clipboard.writeText(coupon);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      };
-
-      return (
-        <div style={{ marginTop: '48px' }}>
-          {!opened ? (
-            <button
-              className="btn-glass accent"
-              onClick={() => setOpened(true)}
-              style={{ fontSize: '0.88rem', padding: '16px 36px' }}
-            >
-              Open Your Gift
-            </button>
-          ) : (
-            <div style={{
-              opacity: opened ? 1 : 0,
-              transform: opened ? 'translateY(0)' : 'translateY(12px)',
-              transition: 'opacity 0.6s ease, transform 0.6s ease',
-            }}>
-              <div className="glass-card" style={{
-                textAlign: 'center',
-                background: 'rgba(232,213,183,0.04)',
-                borderColor: 'rgba(232,213,183,0.12)',
-                maxWidth: '400px', margin: '0 auto',
-              }}>
-                <p style={{
-                  fontSize: '0.65rem', letterSpacing: '0.2em', color: 'var(--text-tertiary)',
-                  textTransform: 'uppercase', marginBottom: '20px', fontWeight: 400,
-                }}>Your Gift Code</p>
-                <div className="gift-code" style={{ marginBottom: '28px' }}>{coupon}</div>
-                <button className="btn-glass" onClick={copy} style={{ fontSize: '0.78rem', padding: '10px 24px' }}>
-                  {copied ? '✓  Copied' : 'Copy Code'}
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      );
-    }
-
-    // ─── Celebration Component ────────────────────────────────────────────────
-    function Celebration({ name, message, coupon }) {
-      return (
-        <div style={{
-          minHeight: '100vh', display: 'flex', alignItems: 'center',
-          justifyContent: 'center', padding: '24px', position: 'relative', zIndex: 1,
-        }}>
-          <AmbientBg celebrate={true} />
-          <Confetti />
-
-          <div style={{ textAlign: 'center', maxWidth: '680px', width: '100%' }}>
-            <Reveal delay={0}>
-              <p style={{
-                fontSize: '0.7rem', letterSpacing: '0.22em', color: 'var(--accent)',
-                textTransform: 'uppercase', marginBottom: '32px', fontWeight: 400,
-                opacity: 0.7,
-              }}>Today is your day</p>
-            </Reveal>
-
-            <Reveal delay={150}>
-              <h1 style={{
-                fontSize: 'clamp(2.4rem, 10vw, 5.5rem)', fontWeight: 800,
-                letterSpacing: '-0.04em', lineHeight: 1.0,
-                marginBottom: '32px',
-                background: 'linear-gradient(135deg, #fff 0%, var(--accent) 60%, #c8a882 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}>
-                Happy Birthday,<br />{name}
-              </h1>
-            </Reveal>
-
-            {message && (
-              <Reveal delay={400}>
-                <p style={{
-                  fontSize: 'clamp(0.95rem, 2.5vw, 1.15rem)', fontWeight: 300,
-                  color: 'var(--text-secondary)', lineHeight: 1.75,
-                  maxWidth: '480px', margin: '0 auto 8px',
-                  letterSpacing: '0.01em',
-                }}>
-                  <TypedText text={message} delay={600} />
+            {/* Header */}
+            <Up delay={0}>
+              <div style={{ marginBottom: '44px' }}>
+                <p style={{ fontSize: '0.6rem', letterSpacing: '0.2em', color: 'var(--text-tertiary)', textTransform: 'uppercase', marginBottom: '14px' }}>
+                  Birthday Experience
                 </p>
-              </Reveal>
-            )}
-
-            {coupon && (
-              <Reveal delay={700}>
-                <GiftReveal coupon={coupon} />
-              </Reveal>
-            )}
-
-            {!coupon && (
-              <Reveal delay={500}>
-                <div className="sep" style={{ marginTop: '48px' }} />
-              </Reveal>
-            )}
-          </div>
-        </div>
-      );
-    }
-
-    // ─── Experience Page ──────────────────────────────────────────────────────
-    function Experience({ search }) {
-      const params = useSearchParams(search);
-      const name = params.get('n');
-      const dateStr = params.get('d');
-      const decode = str => { try { return decodeURIComponent(escape(atob(str))); } catch(e) { return str; } };
-      const message = params.get('m') ? decode(params.get('m')) : '';
-      const coupon = params.get('c') ? decode(params.get('c')) : '';
-
-      // Validate
-      if (!name || !dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
-        return (
-          <div style={{
-            minHeight: '100vh', display: 'flex', alignItems: 'center',
-            justifyContent: 'center', padding: '24px', position: 'relative', zIndex: 1,
-            textAlign: 'center',
-          }}>
-            <AmbientBg celebrate={false} />
-            <div>
-              <p style={{
-                fontSize: '0.65rem', letterSpacing: '0.22em', color: 'var(--text-tertiary)',
-                textTransform: 'uppercase', marginBottom: '24px',
-              }}>404</p>
-              <h2 style={{
-                fontSize: 'clamp(1.5rem, 5vw, 2.8rem)', fontWeight: 600,
-                letterSpacing: '-0.03em', color: 'var(--text-primary)', marginBottom: '16px',
-              }}>The stars aren't aligned.</h2>
-              <p style={{ color: 'var(--text-tertiary)', fontSize: '0.9rem', fontWeight: 300 }}>
-                Invalid or incomplete link.
-              </p>
-              <a href="#/" style={{
-                display: 'inline-block', marginTop: '40px', color: 'var(--text-secondary)',
-                fontSize: '0.8rem', textDecoration: 'none', letterSpacing: '0.06em',
-                borderBottom: '1px solid var(--border)',
-                paddingBottom: '2px',
-                transition: 'color 0.2s ease, border-color 0.2s ease',
-              }}>← Generate a link</a>
-            </div>
-          </div>
-        );
-      }
-
-      // Date comparison — local date
-      const today = new Date();
-      const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-      const isBirthday = todayStr >= dateStr;
-
-      return isBirthday
-        ? <Celebration name={name} message={message} coupon={coupon} />
-        : <Countdown targetDate={dateStr} name={name} />;
-    }
-
-    // ─── Generator Page ───────────────────────────────────────────────────────
-    function Generator({ navigate }) {
-      const [form, setForm] = useState({ name: '', date: '', message: '', coupon: '' });
-      const [link, setLink] = useState('');
-      const [copied, setCopied] = useState(false);
-      const [errors, setErrors] = useState({});
-
-      const update = (k, v) => setForm(f => ({ ...f, [k]: v }));
-
-      const validate = () => {
-        const e = {};
-        if (!form.name.trim()) e.name = true;
-        if (!form.date) e.date = true;
-        setErrors(e);
-        return Object.keys(e).length === 0;
-      };
-
-      const b64 = str => btoa(unescape(encodeURIComponent(str)));
-
-      const generate = () => {
-        if (!validate()) return;
-        const params = new URLSearchParams();
-        params.set('n', form.name.trim());
-        params.set('d', form.date);
-        if (form.message.trim()) params.set('m', b64(form.message.trim()));
-        if (form.coupon.trim()) params.set('c', b64(form.coupon.trim()));
-        const url = `${window.location.origin}${window.location.pathname}#/celebrate?${params.toString()}`;
-        setLink(url);
-        setCopied(false);
-      };
-
-      const copy = async () => {
-        await navigator.clipboard.writeText(link);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      };
-
-      const preview = () => {
-        if (!link) return;
-        const hash = link.split('#')[1];
-        window.location.hash = hash;
-      };
-
-      return (
-        <div style={{
-          minHeight: '100vh', display: 'flex', alignItems: 'center',
-          justifyContent: 'center', padding: '24px', position: 'relative', zIndex: 1,
-        }}>
-          <AmbientBg celebrate={false} />
-          <div style={{ width: '100%', maxWidth: '480px' }}>
-
-            <Reveal delay={0}>
-              <div style={{ marginBottom: '48px' }}>
-                <p style={{
-                  fontSize: '0.65rem', letterSpacing: '0.22em', color: 'var(--text-tertiary)',
-                  textTransform: 'uppercase', marginBottom: '16px', fontWeight: 400,
-                }}>Birthday Experience</p>
-                <h1 style={{
-                  fontSize: 'clamp(1.8rem, 5vw, 2.8rem)', fontWeight: 700,
-                  letterSpacing: '-0.035em', color: 'var(--text-primary)', lineHeight: 1.1,
-                }}>Make someone feel<br />extraordinary.</h1>
+                <h1 style={{ fontSize: 'clamp(1.7rem, 5vw, 2.6rem)', fontWeight: 700, letterSpacing: '-0.035em', lineHeight: 1.1 }}>
+                  Make someone feel<br />extraordinary.
+                </h1>
+                <p style={{ marginTop: '14px', fontSize: '0.82rem', color: 'var(--text-secondary)', fontWeight: 300, lineHeight: 1.65 }}>
+                  Generate a personalised birthday link — drop in their name, date, a message, and an ArtWear gift code. Share it. Let them unwrap it.
+                </p>
               </div>
-            </Reveal>
+            </Up>
 
-            <Reveal delay={150}>
-              <div className="glass-card">
-                {/* Name */}
-                <div style={{ marginBottom: '32px' }}>
-                  <label style={{
-                    display: 'block', fontSize: '0.65rem', letterSpacing: '0.16em',
-                    color: 'var(--text-tertiary)', textTransform: 'uppercase',
-                    marginBottom: '10px', fontWeight: 400,
-                  }}>Name <span style={{ color: errors.name ? '#ff6b6b' : 'transparent' }}>*</span></label>
-                  <input
-                    className="field-input"
-                    type="text"
-                    placeholder="Their name"
-                    value={form.name}
-                    onChange={e => update('name', e.target.value)}
-                    style={{ borderBottomColor: errors.name ? 'rgba(255,107,107,0.5)' : undefined }}
-                  />
+            {/* Form */}
+            <Up delay={140}>
+              <div className="card">
+                <div className="field-wrap">
+                  <label className="field-label">Name {errors.name && <span style={{ color: 'var(--red)', marginLeft: 4 }}>required</span>}</label>
+                  <input className={`field-input${errors.name ? ' error' : ''}`} type="text" placeholder="Their name" value={form.name} onChange={e => set('name', e.target.value)} />
                 </div>
-
-                {/* Date */}
-                <div style={{ marginBottom: '32px' }}>
-                  <label style={{
-                    display: 'block', fontSize: '0.65rem', letterSpacing: '0.16em',
-                    color: 'var(--text-tertiary)', textTransform: 'uppercase',
-                    marginBottom: '10px', fontWeight: 400,
-                  }}>Birthday Date <span style={{ color: errors.date ? '#ff6b6b' : 'transparent' }}>*</span></label>
-                  <input
-                    className="field-input"
-                    type="date"
-                    value={form.date}
-                    onChange={e => update('date', e.target.value)}
-                    style={{ borderBottomColor: errors.date ? 'rgba(255,107,107,0.5)' : undefined }}
-                  />
+                <div className="field-wrap">
+                  <label className="field-label">Birthday Date {errors.date && <span style={{ color: 'var(--red)', marginLeft: 4 }}>required</span>}</label>
+                  <input className={`field-input${errors.date ? ' error' : ''}`} type="date" value={form.date} onChange={e => set('date', e.target.value)} />
                 </div>
-
-                {/* Message */}
-                <div style={{ marginBottom: '32px' }}>
-                  <label style={{
-                    display: 'block', fontSize: '0.65rem', letterSpacing: '0.16em',
-                    color: 'var(--text-tertiary)', textTransform: 'uppercase',
-                    marginBottom: '10px', fontWeight: 400,
-                  }}>Message <span style={{ opacity: 0.4, textTransform: 'none', letterSpacing: 0, fontSize: '0.6rem' }}>optional</span></label>
-                  <textarea
-                    className="field-input"
-                    rows={3}
-                    placeholder="Write something from the heart…"
-                    value={form.message}
-                    onChange={e => update('message', e.target.value)}
-                  />
+                <div className="field-wrap">
+                  <label className="field-label">Message <span className="opt">optional</span></label>
+                  <textarea className="field-input" rows={3} placeholder="Write something from the heart…" value={form.message} onChange={e => set('message', e.target.value)} />
                 </div>
-
-                {/* Coupon */}
-                <div style={{ marginBottom: '40px' }}>
-                  <label style={{
-                    display: 'block', fontSize: '0.65rem', letterSpacing: '0.16em',
-                    color: 'var(--text-tertiary)', textTransform: 'uppercase',
-                    marginBottom: '10px', fontWeight: 400,
-                  }}>Gift Code <span style={{ opacity: 0.4, textTransform: 'none', letterSpacing: 0, fontSize: '0.6rem' }}>optional</span></label>
-                  <input
-                    className="field-input"
-                    type="text"
-                    placeholder="e.g. BDAY30"
-                    value={form.coupon}
-                    onChange={e => update('coupon', e.target.value)}
-                  />
+                <div className="field-wrap" style={{ marginBottom: '36px' }}>
+                  <label className="field-label">ArtWear Gift Code <span className="opt">optional</span></label>
+                  <input className="field-input" type="text" placeholder="e.g. BDAY30" value={form.coupon} onChange={e => set('coupon', e.target.value)} />
                 </div>
-
-                <button className="btn-glass accent" onClick={generate} style={{ width: '100%', fontSize: '0.88rem' }}>
-                  Generate Link
+                <button className="btn primary full" onClick={generate} style={{ padding: '15px', fontSize: '0.87rem' }}>
+                  Generate Experience Link
                 </button>
               </div>
-            </Reveal>
+            </Up>
 
             {/* Output */}
             {link && (
-              <Reveal delay={0}>
-                <div style={{ marginTop: '24px' }}>
-                  <div className="glass-card" style={{ padding: '24px' }}>
-                    <p style={{
-                      fontSize: '0.6rem', letterSpacing: '0.2em', color: 'var(--text-tertiary)',
-                      textTransform: 'uppercase', marginBottom: '14px',
-                    }}>Your Link</p>
-                    <div className="output-box" style={{ marginBottom: '20px' }}>{link}</div>
-                    <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                      <button className="btn-glass" onClick={copy} style={{
-                        flex: 1, minWidth: '120px', fontSize: '0.8rem', padding: '12px 20px',
+              <Up delay={0}>
+                <div style={{ marginTop: '20px' }}>
+                  <div className="card" style={{ padding: '24px' }}>
+                    <p style={{ fontSize: '0.58rem', letterSpacing: '0.18em', color: 'var(--text-tertiary)', textTransform: 'uppercase', marginBottom: '12px' }}>
+                      Your Link
+                    </p>
+                    <div className="output-box" style={{ marginBottom: '18px' }}>{link}</div>
+                    <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                      <button className="btn" onClick={copy} style={{
+                        flex: 1, minWidth: '110px', fontSize: '0.78rem', padding: '11px 16px',
                         color: copied ? 'var(--accent)' : undefined,
-                        borderColor: copied ? 'rgba(232,213,183,0.25)' : undefined,
+                        borderColor: copied ? 'var(--accent-border)' : undefined,
                       }}>
                         {copied ? '✓  Copied!' : 'Copy Link'}
                       </button>
-                      <button className="btn-glass" onClick={preview} style={{
-                        flex: 1, minWidth: '120px', fontSize: '0.8rem', padding: '12px 20px',
-                      }}>
+                      <button className="btn" onClick={preview} style={{ flex: 1, minWidth: '110px', fontSize: '0.78rem', padding: '11px 16px' }}>
                         Preview →
                       </button>
                     </div>
                   </div>
                 </div>
-              </Reveal>
+              </Up>
             )}
 
           </div>
         </div>
-      );
-    }
+        <Footer />
+      </>
+    );
+  }
 
-    // ─── App ──────────────────────────────────────────────────────────────────
-    function App() {
-      const { location, navigate } = useRouter();
+  // ─── App ──────────────────────────────────────────────────────────────────
+  function App() {
+    const { loc } = useRouter();
+    useEffect(() => { if (!window.location.hash) window.location.hash = '#/'; }, []);
+    return loc.path === '/celebrate' ? <Experience search={loc.search} /> : <Generator />;
+  }
 
-      // Ensure hash is set on first load
-      useEffect(() => {
-        if (!window.location.hash) window.location.hash = '#/';
-      }, []);
-
-      const { path, search } = location;
-
-      return (
-        <>
-          {path === '/celebrate'
-            ? <Experience search={search} />
-            : <Generator navigate={navigate} />
-          }
-        </>
-      );
-    }
-
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-  </script>
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
 </body>
 </html>
-
